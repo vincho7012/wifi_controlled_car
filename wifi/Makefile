@@ -11,7 +11,7 @@ wifi: wifi.o
 wifi.o: wifi.c
 
 flash: wifi-0x00000.bin
-	esptool.py write_flash 0 wifi-0x00000.bin 0x10000 wifi-0x10000.bin
+	esptool.py -b 921600 write_flash -fm dio -fs 32m 0 wifi-0x00000.bin 0x10000 wifi-0x10000.bin 0x3fc000 esp_init_data_default.bin
 
 clean:
 	rm -f wifi wifi.o wifi-0x00000.bin wifi-0x10000.bin

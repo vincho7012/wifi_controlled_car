@@ -6,13 +6,14 @@
 #include "user_interface.h"
 
 #include "espconn.h"
+#include "eagle_soc.h"
 
 
 
-static const int fwd_pin = 16;
-static const int bwd_pin = 14;
-static const int left_pin = 13;
-static const int right_pin = 12;
+static const int fwd_pin = 2;
+static const int bwd_pin = 4;
+static const int left_pin = 0;
+static const int right_pin = 5;
 
 
 
@@ -20,7 +21,8 @@ const char *forward_command = "FF";
 const char *backward_command = "BB";
 const char *left_command = "LL";
 const char *right_command = "RR";
-const char *stop_command = "UU";
+const char *stop_turning_command = "UU";
+const char *stop_moving_command = "SS";
 
 /*---------------------------------------------------------------------------*/
 LOCAL struct espconn ptrespconn;
@@ -93,10 +95,14 @@ user_udp_recv(void *arg, char *pusrdata, unsigned short length)
         GPIO_OUTPUT_SET(right_pin, 1);
         GPIO_OUTPUT_SET(left_pin, 0);
     }
-    if (os_strncmp(pusrdata, stop_command, os_strlen(stop_command)) == 0)
+    if (os_strncmp(pusrdata, stop_moving_command, os_strlen(stop_moving_command)) == 0)
     {
         GPIO_OUTPUT_SET(fwd_pin, 0);
         GPIO_OUTPUT_SET(bwd_pin, 0);
+
+    }
+    if (os_strncmp(pusrdata, stop_turning_command, os_strlen(stop_turning_command)) == 0)
+    {
         GPIO_OUTPUT_SET(right_pin, 0);
         GPIO_OUTPUT_SET(left_pin, 0);
     }
@@ -163,7 +169,12 @@ void user_init(void)
     // ESP8266 softAP set config.
     user_set_softap_config();
 
+    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO0_U, FUNC_GPIO0);
+    PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_GPIO2);
+
     gpio_init();
+
+
 
     user_udp_init();
 
