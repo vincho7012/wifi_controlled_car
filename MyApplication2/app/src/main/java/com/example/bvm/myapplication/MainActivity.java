@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         {
             try {
 
-                pressed_udp(null);
-                TimeUnit.MILLISECONDS.sleep(1000);
+                    unpressed_udp(v);
+                //TimeUnit.MILLISECONDS.sleep(1000);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -166,10 +166,12 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             }
 
         }
+
         if(view == null)
         {
             sendData[0] = 'U';
         }
+
         sendData[1] = sendData[0];
         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 4210);
        // System.out.println(IPAddress);
@@ -177,6 +179,24 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         formed_package = true;
        // return sendPacket;
 
+
+    }
+
+    public void unpressed_udp(View view) throws IOException, InterruptedException {
+        InetAddress IPAddress = InetAddress.getByName("192.168.4.1");
+        byte[] sendData = new byte[2];
+
+        if(view == (Button) findViewById(R.id.button_right ) || view == (Button) findViewById(R.id.button_left))
+        {
+            sendData[0] = 'U';
+        }
+        else
+            sendData[0] = 'S';
+
+        sendData[1] = sendData[0];
+        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 4210);
+        packet_to_send = sendPacket;
+        formed_package = true;
 
     }
 
